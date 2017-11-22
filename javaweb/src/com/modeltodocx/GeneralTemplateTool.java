@@ -37,17 +37,21 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
 public class GeneralTemplateTool {
 
 	public static void main(String[] args) {
-		String filePath = "D:/Work/javaweb/template/template.docx";// 模板 无表格
+		String filePath = "D:/Work/javaweb/template/template.docx";//模板路径
 		String res = String.valueOf(new Date().getTime());
-		String outFile = "D:/DOC/doc/模板生成文件" + res + ".docx";
+		String outFile = "D:/DOC/doc/模板生成文件" + res + ".docx";//生成文档路径
 		try {
 			GeneralTemplateTool gtt = new GeneralTemplateTool();
-			
-			
+
 			Map<String, Object> params = new HashMap<String, Object>();
+			//创建替代模板里段落中如${title}值开始
 			params.put("title","  标题文字" );
-			params.put("myTable1","软件工程一班");
-			params.put("myTable2","金融广告二班");  
+			params.put("Tab1Title","软件工程一班");
+			params.put("Tab2Title","金融广告二班");  
+			//......对应模板扩展
+			//创建替代模板里段落中如${title}值结束
+			
+			//创建替代&生成模板里tab1标识的表格中的值开始
 			List<Map<String,String>> tab1list = new ArrayList<Map<String,String>>();
 			Map<String, String> mapth = new HashMap<String, String>();
 			mapth.put("name", "姓名");
@@ -67,29 +71,47 @@ public class GeneralTemplateTool {
 		        map.put("phone", "1312365322"+i);
 		        tab1list.add(map);
 			}
-		    params.put("tab1list", tab1list);//tab1 数据
+		    params.put("tab1", tab1list);
+		    //创建替代&生成模板里tab1标识的表格中的值结束
+		    
+     	    //创建替代&生成模板里tab2标识的表格中的值开始
 		    List<Map<String,String>> tab2list = new ArrayList<Map<String,String>>();
 			Map<String, String> mapth2 = new HashMap<String, String>();
 			mapth2.put("name", "姓名");
 			mapth2.put("age", "年龄");
 			mapth2.put("sex", "性别");
 			mapth2.put("job", "职业");
-			mapth2.put("hobby", "爱好");
-			mapth2.put("phone", "电话");
-			tab2list.add(mapth);
+			tab2list.add(mapth2);
 			for (int i = 1; i <= 4; i++) {
 		        Map<String, String> map = new HashMap<String, String>();
 		        map.put("name", "王" + i);
 		        map.put("age", "1" + i);
 		        map.put("sex", "女");
 		        map.put("job", "职业"+i);
-		        map.put("hobby", "爱好"+i);
-		        map.put("phone", "1322222222"+i);
 		        tab2list.add(map);    
 			}
-			params.put("tab2list", tab2list);//tab1 数据
+			params.put("tab2", tab2list);
+			//创建替代&生成模板里tab2标识的表格中的值结束
 			
+			//创建替代&生成模板里tab3标识的表格中的值开始
+			List<Map<String,String>> tab3list = new ArrayList<Map<String,String>>();
+			Map<String, String> mapth3 = new HashMap<String, String>();
+			mapth3.put("a", "a列");
+			mapth3.put("b", "b列");
+			mapth3.put("c", "c列");
+			tab3list.add(mapth3);
+			for (int i = 1; i <= 4; i++) {
+		        Map<String, String> map = new HashMap<String, String>();
+		        map.put("a", "a列值" + i);
+		        map.put("b", "b列值" + i);
+		        map.put("c", "c列值" + i);
+		        tab3list.add(map);    
+			}
+			params.put("tab3", tab3list);
+			//创建替代&生成模板里tab3标识的表格中的值结束
+			//......对应模板扩展
 			
+			//通用方法
 			gtt.templateWrite(filePath, outFile, params);
 			System.out.println("生成模板成功");
 			System.out.println(outFile);
@@ -149,8 +171,9 @@ public class GeneralTemplateTool {
 			
 /**
  * 用一个docx文档作为模板，然后替换其中的内容，再写入目标文档中。
- * @param list 
- * 
+ * @param filePath
+ * @param outFile
+ * @param params
  * @throws Exception
  */
 public void templateWrite(String filePath, String outFile,
@@ -171,7 +194,14 @@ public void templateWrite(String filePath, String outFile,
     this.insertimageToDoc(outFile,imageFile);
 }
 
-
+/**
+ * 插入图片到目标文档中
+ * @param outFile
+ * @param imageFile
+ * @throws FileNotFoundException
+ * @throws IOException
+ * @throws InvalidFormatException
+ */
 private void insertimageToDoc(String outFile, String imageFile)
 		throws FileNotFoundException, IOException, InvalidFormatException {
 	CustomXWPFDocument document = new CustomXWPFDocument(
@@ -268,56 +298,63 @@ private void insertValueToTables(XWPFDocument doc, Map<String, Object> params)
         table = iterator.next();
 		rows = table.getRows();//获取表格行数据list
 		tmpRow = rows.get(1);//第二行为模板行 
-		List<Map> tab1list =null;
+		List<Map> tablist =null;
 		List<String> listkey = new ArrayList<String>();
 		for (int i = 1; i <= rows.size(); i++) {
 			//获取当前行所有列
 			cells = rows.get(i - 1).getTableCells();
-			int intcell = 1;
-			//遍历列
-			for (XWPFTableCell cell : cells) {
-				System.out.println(intcell + "列：" + cell.getText()+ "  row=" + i);
-				if (i == 1) {//取第一行第一列表标识 map里取对应表list数据
-					tab1list = (List<Map>) params.get(cell.getText());
-				} else if(i == 2){//第二行替代值并创建list key用，并开始动态创建表
-					Map mapth = tab1list.get(0);
-					paras = cell.getParagraphs();
-					for (XWPFParagraph para : paras) {
-						//读取的值去掉${}
-						String keystr = para.getParagraphText();
-						keystr = keystr.trim().replace("${", "").replace("}", "");
-						//System.out.println(keystr);
-						listkey.add(keystr);
-						this.replaceInPara(para, mapth);//
+			if(i==1){
+				int intcell = 1;
+				//遍历列 
+				for (XWPFTableCell cell : cells) {
+					if (intcell == 1) {//取第一行第一列表标识 map里取对应表list数据
+						System.out.println("###表标识值：" +cell.getText());
+						tablist = (List<Map>) params.get(cell.getText());
 					}
+					intcell++;
 				}
+			}else if(i==2){//第二行替代值并创建list key用，并开始动态创建表
+				int intcell = 1;
+				for (XWPFTableCell cell : cells) {
+					System.out.println(intcell + "列：" + cell.getText()+ "  row=" + i);
+						Map mapth = tablist.get(0);
+						paras = cell.getParagraphs();
+						for (XWPFParagraph para : paras) {
+							//读取的值去掉${}
+							String keystr = para.getParagraphText();
+							keystr = keystr.trim().replace("${", "").replace("}", "");
+							listkey.add(keystr);
+							this.replaceInPara(para, mapth);
+						}
+					}
 				intcell++;
 			}
 		}
 		tmpCells = tmpRow.getTableCells();
-		for (int i = 1; i < tab1list.size(); i++) {
+		for (int i = 1; i < tablist.size(); i++) {
 			System.out.println("开始写第" + i + "行");
 			XWPFTableRow row = table.createRow();
 			row.setHeight(tmpRow.getHeight());
-			Map<String,String> tempmap = tab1list.get(i);
+			Map<String,String> tempmap = tablist.get(i);
 			cells = row.getTableCells();
 			// 插入的行会填充与表格第一行相同的列数
 			for (int k = 0 ; k < cells.size(); k++) {
 				tmpCell = tmpCells.get(k);
 				XWPFTableCell cell = cells.get(k);
-				setCellText(tmpCell, cell, tab1list.get(i).get(listkey.get(k)).toString());
-				System.out.println("第"+(k+1)+"列：" +tab1list.get(i).get(listkey.get(k)).toString());
+				setCellText(tmpCell, cell, tablist.get(i).get(listkey.get(k)).toString());
+				System.out.println("第"+(k+1)+"列：" +tablist.get(i).get(listkey.get(k)).toString());
 			}
 			// 继续写剩余的列
 			for (int j = cells.size(); j < listkey.size(); j++) {
 				tmpCell = tmpCells.get(j);
 				XWPFTableCell cell = row.addNewTableCell();
-				setCellText(tmpCell, cell, tab1list.get(i).get(listkey.get(j)).toString());
-				System.out.println("第"+(j+1)+"列：" +tab1list.get(i).get(listkey.get(j)).toString());
+				setCellText(tmpCell, cell, tablist.get(i).get(listkey.get(j)).toString());
+				System.out.println("第"+(j+1)+"列：" +tablist.get(i).get(listkey.get(j)).toString());
 			}
 		}
 		// 删除表标识行
 		table.removeRow(0);
+		System.out.println("-------解析出第 "+z+" 个表------结束处理");
 		z++;
     }
 }
