@@ -34,17 +34,63 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSpacing;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc; 
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
 
-public class GeneralTemplateDOCX {
+public class GeneralTemplateTool {
 
 	public static void main(String[] args) {
-		String filePath = "D:/Work/javaweb/template/模板.docx";// 模板 无表格
+		String filePath = "D:/Work/javaweb/template/template.docx";// 模板 无表格
 		String res = String.valueOf(new Date().getTime());
 		String outFile = "D:/DOC/doc/模板生成文件" + res + ".docx";
 		try {
-			GeneralTemplateDOCX gt = new GeneralTemplateDOCX();
-			Map<String, Object> params = gt.getParams();
-			gt.templateWrite(filePath, outFile, params, gt.generateTestData(5),
-					gt.generateTestData2(4));
+			GeneralTemplateTool gtt = new GeneralTemplateTool();
+			
+			
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("title","  标题文字" );
+			params.put("myTable1","软件工程一班");
+			params.put("myTable2","金融广告二班");  
+			List<Map<String,String>> tab1list = new ArrayList<Map<String,String>>();
+			Map<String, String> mapth = new HashMap<String, String>();
+			mapth.put("name", "姓名");
+			mapth.put("age", "年龄");
+			mapth.put("sex", "性别");
+			mapth.put("job", "职业");
+			mapth.put("hobby", "爱好");
+			mapth.put("phone", "电话");
+			tab1list.add(mapth);
+			for (int i = 1; i <= 3; i++) {
+		        Map<String, String> map = new HashMap<String, String>();
+		        map.put("name", "张" + i);
+		        map.put("age", "1" + i);
+		        map.put("sex", "男");
+		        map.put("job", "职业"+i);
+		        map.put("hobby", "爱好"+i);
+		        map.put("phone", "1312365322"+i);
+		        tab1list.add(map);
+			}
+		    params.put("tab1list", tab1list);//tab1 数据
+		    List<Map<String,String>> tab2list = new ArrayList<Map<String,String>>();
+			Map<String, String> mapth2 = new HashMap<String, String>();
+			mapth2.put("name", "姓名");
+			mapth2.put("age", "年龄");
+			mapth2.put("sex", "性别");
+			mapth2.put("job", "职业");
+			mapth2.put("hobby", "爱好");
+			mapth2.put("phone", "电话");
+			tab2list.add(mapth);
+			for (int i = 1; i <= 4; i++) {
+		        Map<String, String> map = new HashMap<String, String>();
+		        map.put("name", "王" + i);
+		        map.put("age", "1" + i);
+		        map.put("sex", "女");
+		        map.put("job", "职业"+i);
+		        map.put("hobby", "爱好"+i);
+		        map.put("phone", "1322222222"+i);
+		        tab2list.add(map);    
+			}
+			params.put("tab2list", tab2list);//tab1 数据
+			
+			
+			gtt.templateWrite(filePath, outFile, params);
 			System.out.println("生成模板成功");
 			System.out.println(outFile);
 		} catch (Exception e) {
@@ -53,58 +99,54 @@ public class GeneralTemplateDOCX {
 		}
 	}
 	
-	public static void TemplateToDoc(){
-		
-	}
 	private Map<String, Object> getParams() {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("title","  标题文字" );
 		params.put("myTable1","软件工程一班");
-		params.put("myTable2","金融广告二班");     
-		params.put("name", "姓名");
-		params.put("age", "年龄");
-		params.put("sex", "男");
-		params.put("job", "职业");
-		params.put("hobby", "爱好");
-		params.put("phone", "电话"); 
-		params.put("name2", "姓名");
-		params.put("age2", "年龄");
-		params.put("sex2", "性别");
-		params.put("job2", "职业");	
+		params.put("myTable2","金融广告二班");  
+		List<Map<String,String>> tab1list = new ArrayList<Map<String,String>>();
+		Map<String, String> mapth = new HashMap<String, String>();
+		mapth.put("name", "姓名");
+		mapth.put("age", "年龄");
+		mapth.put("sex", "性别");
+		mapth.put("job", "职业");
+		mapth.put("hobby", "爱好");
+		mapth.put("phone", "电话");
+		tab1list.add(mapth);
+		for (int i = 1; i <= 3; i++) {
+	        Map<String, String> map = new HashMap<String, String>();
+	        map.put("name", "张" + i);
+	        map.put("age", "1" + i);
+	        map.put("sex", "男");
+	        map.put("job", "职业"+i);
+	        map.put("hobby", "爱好"+i);
+	        map.put("phone", "1312365322"+i);
+	        tab1list.add(map);
+		}
+	    params.put("tab1list", tab1list);//tab1 数据
+	    List<Map<String,String>> tab2list = new ArrayList<Map<String,String>>();
+		Map<String, String> mapth2 = new HashMap<String, String>();
+		mapth2.put("name", "姓名");
+		mapth2.put("age", "年龄");
+		mapth2.put("sex", "性别");
+		mapth2.put("job", "职业");
+		mapth2.put("hobby", "爱好");
+		mapth2.put("phone", "电话");
+		tab2list.add(mapth);
+		for (int i = 1; i <= 4; i++) {
+	        Map<String, String> map = new HashMap<String, String>();
+	        map.put("name", "王" + i);
+	        map.put("age", "1" + i);
+	        map.put("sex", "女");
+	        map.put("job", "职业"+i);
+	        map.put("hobby", "爱好"+i);
+	        map.put("phone", "1322222222"+i);
+	        tab2list.add(map);    
+		}
+		params.put("tab2list", tab2list);//tab1 数据
 		return params;
 	}
-
-	// 生成tab1测试数据
-	public List<List<String>> generateTestData(int num) {
-	    List<List<String>> resultList = new ArrayList<List<String>>();
-	    for (int i = 1; i <= num; i++) {
-	        List<String> list = new ArrayList<String>();
-	        list.add("张" + i);
-	        list.add("1" + i);
-	        list.add("男");
-	        list.add("职业"+i);
-	        list.add("爱好"+i);
-	        list.add("1312365322"+i);
-	        resultList.add(list);
-	    }
-	    return resultList;
-	}
-	
-	
-	// 生成tab2测试数据
-	public List<List<String>> generateTestData2(int num) {
-		List<List<String>> resultList = new ArrayList<List<String>>();
-		for (int i = 1; i <= num; i++) {
-			List<String> list = new ArrayList<String>();
-			list.add("李" + i);
-			list.add("2" + i);
-			list.add("女");
-			list.add("工作"+i);
-			resultList.add(list);
-		}
-		return resultList;
-	}
-	
+			
 /**
  * 用一个docx文档作为模板，然后替换其中的内容，再写入目标文档中。
  * @param list 
@@ -112,14 +154,14 @@ public class GeneralTemplateDOCX {
  * @throws Exception
  */
 public void templateWrite(String filePath, String outFile,
-        Map<String, Object> params,List<List<String>> list1, List<List<String>> list2) throws Exception {
+        Map<String, Object> params) throws Exception {
     InputStream is = new FileInputStream(filePath);
     System.out.println(filePath);
     XWPFDocument doc = new XWPFDocument(is); 
     // 替换段落里面的变量
     this.replaceInPara(doc, params);
-    // 替换多个表格里面的变量并插入对应数据  Flag1 插入resultList Flag2 插入list 数据
-    this.insertValueToTables(doc, params,list1,list2);
+    // 替换多个表格里面的变量并插入数据  
+    this.insertValueToTables(doc, params);
     OutputStream os = new FileOutputStream(outFile);
     doc.write(os);
     this.close(os);
@@ -179,12 +221,13 @@ private boolean replaceInPara(XWPFParagraph para, Map<String, Object> params) {
         for (int i = 0; i < runs.size(); i++) {
             XWPFRun run = runs.get(i);
             String runText = run.toString();
-            System.out.println("将被替代的列值："+runText);
+            System.out.println("----"+runText);
             matcher = this.matcher(runText);
             if (matcher.find()) {
                 while ((matcher = this.matcher(runText)).find()) {
-                    runText = matcher.replaceFirst(String.valueOf(params
-                            .get(matcher.group(1))));
+                	String str=String.valueOf(params.get(matcher.group(1)));
+                	System.out.println("----"+str);
+                    runText = matcher.replaceFirst(str);
                 }
                 // 直接调用XWPFRun的setText()方法设置文本时，在底层会重新创建一个XWPFRun，把文本附加在当前文本后面，
                 // 所以我们不能直接设值，需要先删除当前run,然后再自己手动插入一个新的run。
@@ -195,9 +238,7 @@ private boolean replaceInPara(XWPFParagraph para, Map<String, Object> params) {
         data = true;
     } else if (this.matcherRow(para.getParagraphText())) {
         runs = para.getRuns();
-
         System.out.println("run  " + runs);
-
         data = true;
     }
     return data;
@@ -205,99 +246,80 @@ private boolean replaceInPara(XWPFParagraph para, Map<String, Object> params) {
 
 /**
  * 按模版行样式填充数据,暂未实现特殊样式填充(如列合并)，只能用于普通样式(如段落间距 缩进 字体 对齐)
- *  Flag1 插入resultList Flag2 插入list 数据
  * @param doc
  *            要替换的文档
  * @param params
  *            参数
- * @param resultList
- *            需要遍历的数据
- * @param list2 
  * @throws Exception
  */
-private void insertValueToTables(XWPFDocument doc, Map<String, Object> params,List<List<String>> list1, List<List<String>> list2)
+private void insertValueToTables(XWPFDocument doc, Map<String, Object> params)
         throws Exception {
     Iterator<XWPFTable> iterator = doc.getTablesIterator();
     XWPFTable table = null;
-    String tflag ="";//表标识
-//    int z =1;
-    //找到表 并获取第二行第一列标识名称 Flag1和Flag2
+    int z =1;
     while (iterator.hasNext()) {
-//    	System.out.println("-------解析出第 "+z+" 个表------开始处理");
-    	List<XWPFTableRow> rows = null;
-    	List<XWPFTableCell> cells = null;
-    	List<XWPFParagraph> paras;
+    	System.out.println("-------解析出第 "+z+" 个表------开始处理");
+    	List<XWPFTableRow> rows = null;//行
+    	List<XWPFTableCell> cells = null;//列
+    	List<XWPFTableCell> tmpCells = null;// 模版列
+    	XWPFTableCell tmpCell = null;// 匹配用
+    	List<XWPFParagraph> paras;//列的元素list
     	XWPFTableRow tmpRow = null;// 匹配用
-    	int thisRow=2;
         table = iterator.next();
-		rows = table.getRows();
+		rows = table.getRows();//获取表格行数据list
+		tmpRow = rows.get(1);//第二行为模板行 
+		List<Map> tab1list =null;
+		List<String> listkey = new ArrayList<String>();
 		for (int i = 1; i <= rows.size(); i++) {
 			//获取当前行所有列
 			cells = rows.get(i - 1).getTableCells();
 			int intcell = 1;
 			//遍历列
 			for (XWPFTableCell cell : cells) {
-//				System.out.println(intcell + "列：" + cell.getText()+ "  row=" + i);
-				if (i == 1) {
+				System.out.println(intcell + "列：" + cell.getText()+ "  row=" + i);
+				if (i == 1) {//取第一行第一列表标识 map里取对应表list数据
+					tab1list = (List<Map>) params.get(cell.getText());
+				} else if(i == 2){//第二行替代值并创建list key用，并开始动态创建表
+					Map mapth = tab1list.get(0);
 					paras = cell.getParagraphs();
 					for (XWPFParagraph para : paras) {
-						// 判断是否含有${}值的列并对应替换掉
-						if (this.replaceInPara(para, params)) {
-							//thisRow = i;// 找到模板行定死第二行为模板行
-							tmpRow = rows.get(1);
-						}
-					}
-				} else if(i == 2){
-					//取第二行第一列
-					if(intcell==1) {
-						tflag = cell.getText();
-						break;
+						//读取的值去掉${}
+						String keystr = para.getParagraphText();
+						keystr = keystr.trim().replace("${", "").replace("}", "");
+						//System.out.println(keystr);
+						listkey.add(keystr);
+						this.replaceInPara(para, mapth);//
 					}
 				}
 				intcell++;
 			}
 		}
-        if("Flag1".equals(tflag)){
-            this.insertValueToTable(tmpRow, table,list1,thisRow);
-        }else if("Flag2".equals(tflag)){
-       	    this.insertValueToTable(tmpRow, table,list2,thisRow);
-        }
-//        else{
-//        	System.out.println("没找到table！");
-//        }
-//        z++;
+		tmpCells = tmpRow.getTableCells();
+		for (int i = 1; i < tab1list.size(); i++) {
+			System.out.println("开始写第" + i + "行");
+			XWPFTableRow row = table.createRow();
+			row.setHeight(tmpRow.getHeight());
+			Map<String,String> tempmap = tab1list.get(i);
+			cells = row.getTableCells();
+			// 插入的行会填充与表格第一行相同的列数
+			for (int k = 0 ; k < cells.size(); k++) {
+				tmpCell = tmpCells.get(k);
+				XWPFTableCell cell = cells.get(k);
+				setCellText(tmpCell, cell, tab1list.get(i).get(listkey.get(k)).toString());
+				System.out.println("第"+(k+1)+"列：" +tab1list.get(i).get(listkey.get(k)).toString());
+			}
+			// 继续写剩余的列
+			for (int j = cells.size(); j < listkey.size(); j++) {
+				tmpCell = tmpCells.get(j);
+				XWPFTableCell cell = row.addNewTableCell();
+				setCellText(tmpCell, cell, tab1list.get(i).get(listkey.get(j)).toString());
+				System.out.println("第"+(j+1)+"列：" +tab1list.get(i).get(listkey.get(j)).toString());
+			}
+		}
+		// 删除表标识行
+		table.removeRow(0);
+		z++;
     }
-}
-
-private void insertValueToTable(XWPFTableRow tmpRow, XWPFTable table,
-		List<List<String>> list1, int thisRow) throws Exception {
-	List<XWPFTableCell> tmpCells = null;// 模版列
-	XWPFTableCell tmpCell = null;// 匹配用
-	List<XWPFTableCell> cells = null;
-	tmpCells = tmpRow.getTableCells();
-	for (int i = 0, len = list1.size(); i < len; i++) {
-		System.out.println("开始写第" + i + "行");
-		XWPFTableRow row = table.createRow();
-		row.setHeight(tmpRow.getHeight());
-		List<String> list = list1.get(i);
-		cells = row.getTableCells();
-		// 插入的行会填充与表格第一行相同的列数
-		for (int k = 0, klen = cells.size(); k < klen; k++) {
-			tmpCell = tmpCells.get(k);
-			XWPFTableCell cell = cells.get(k);
-			setCellText(tmpCell, cell, list.get(k));
-		}
-		// 继续写剩余的列
-		for (int j = cells.size(), jlen = list.size(); j < jlen; j++) {
-			tmpCell = tmpCells.get(j);
-			XWPFTableCell cell = row.addNewTableCell();
-			setCellText(tmpCell, cell, list.get(j));
-			System.out.println("内容" + list.get(j));
-		}
-	}
-	// 删除模版行
-	table.removeRow(thisRow - 1);
-	
 }
 
 public void setCellText(XWPFTableCell tmpCell, XWPFTableCell cell,
