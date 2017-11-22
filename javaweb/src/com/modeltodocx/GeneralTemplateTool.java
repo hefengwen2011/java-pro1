@@ -120,54 +120,6 @@ public class GeneralTemplateTool {
 			e.printStackTrace();
 		}
 	}
-	
-	private Map<String, Object> getParams() {
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("title","  标题文字" );
-		params.put("myTable1","软件工程一班");
-		params.put("myTable2","金融广告二班");  
-		List<Map<String,String>> tab1list = new ArrayList<Map<String,String>>();
-		Map<String, String> mapth = new HashMap<String, String>();
-		mapth.put("name", "姓名");
-		mapth.put("age", "年龄");
-		mapth.put("sex", "性别");
-		mapth.put("job", "职业");
-		mapth.put("hobby", "爱好");
-		mapth.put("phone", "电话");
-		tab1list.add(mapth);
-		for (int i = 1; i <= 3; i++) {
-	        Map<String, String> map = new HashMap<String, String>();
-	        map.put("name", "张" + i);
-	        map.put("age", "1" + i);
-	        map.put("sex", "男");
-	        map.put("job", "职业"+i);
-	        map.put("hobby", "爱好"+i);
-	        map.put("phone", "1312365322"+i);
-	        tab1list.add(map);
-		}
-	    params.put("tab1list", tab1list);//tab1 数据
-	    List<Map<String,String>> tab2list = new ArrayList<Map<String,String>>();
-		Map<String, String> mapth2 = new HashMap<String, String>();
-		mapth2.put("name", "姓名");
-		mapth2.put("age", "年龄");
-		mapth2.put("sex", "性别");
-		mapth2.put("job", "职业");
-		mapth2.put("hobby", "爱好");
-		mapth2.put("phone", "电话");
-		tab2list.add(mapth);
-		for (int i = 1; i <= 4; i++) {
-	        Map<String, String> map = new HashMap<String, String>();
-	        map.put("name", "王" + i);
-	        map.put("age", "1" + i);
-	        map.put("sex", "女");
-	        map.put("job", "职业"+i);
-	        map.put("hobby", "爱好"+i);
-	        map.put("phone", "1322222222"+i);
-	        tab2list.add(map);    
-		}
-		params.put("tab2list", tab2list);//tab1 数据
-		return params;
-	}
 			
 /**
  * 用一个docx文档作为模板，然后替换其中的内容，再写入目标文档中。
@@ -189,20 +141,22 @@ public void templateWrite(String filePath, String outFile,
     doc.write(os);
     this.close(os);
     this.close(is);
-    String imageFile ="D:/Work/条形码.jpg";
+    String imageFile ="D:/Work/cmis-main-dev/template/word/插入图.jpg";
     // 文档中插入图片
-    this.insertimageToDoc(outFile,imageFile);
+    this.insertimageToDoc(outFile,imageFile,350,50);
 }
 
 /**
  * 插入图片到目标文档中
  * @param outFile
  * @param imageFile
+ * @param j 
+ * @param i 
  * @throws FileNotFoundException
  * @throws IOException
  * @throws InvalidFormatException
  */
-private void insertimageToDoc(String outFile, String imageFile)
+private void insertimageToDoc(String outFile, String imageFile, int wide, int high)
 		throws FileNotFoundException, IOException, InvalidFormatException {
 	CustomXWPFDocument document = new CustomXWPFDocument(
 			new FileInputStream(new File(outFile)));
@@ -210,8 +164,8 @@ private void insertimageToDoc(String outFile, String imageFile)
 	String blipId = document.addPictureData(new FileInputStream(new File(
 			imageFile)), Document.PICTURE_TYPE_JPEG);
 	document.createPicture(blipId,
-			document.getNextPicNameNumber(Document.PICTURE_TYPE_JPEG), 250,
-			50);
+			document.getNextPicNameNumber(Document.PICTURE_TYPE_JPEG), wide,
+			high);
 	document.write(fos);
 	fos.flush();
 	fos.close();
