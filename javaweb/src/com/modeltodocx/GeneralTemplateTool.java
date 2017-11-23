@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.xwpf.usermodel.Document;
+import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.XWPFDocument; 
 import org.apache.poi.xwpf.usermodel.XWPFParagraph; 
 import org.apache.poi.xwpf.usermodel.XWPFRun; 
@@ -29,6 +30,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTInd; 
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP; 
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr; 
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr; 
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSpacing; 
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc; 
@@ -36,70 +38,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
 
 public class GeneralTemplateTool {
 
-	public static void main(String[] args) {
-		String filePath = "D:/Work/javaweb/template/template.docx";//模板路径
-		String res = String.valueOf(new Date().getTime());
-		String outFile = "D:/DOC/doc/插入值后文档" + res + ".docx";//生成文档路径
-		try {
-			GeneralTemplateTool gtt = new GeneralTemplateTool();
-
-			Map<String, Object> params = new HashMap<String, Object>();
-			//创建替代模板里段落中如${title}值开始
-			params.put("title","  标题文字" );
-			params.put("Tab1Title","表一");
-			params.put("Tab2Title","表二");  
-			//......对应模板扩展
-			//创建替代模板里段落中如${title}值结束
-			
-			//创建替代&生成模板里tab1标识的表格中的值开始
-			List<Map<String,String>> tab1list = new ArrayList<Map<String,String>>();
-			for (int i = 1; i <= 3; i++) {
-		        Map<String, String> map = new HashMap<String, String>();
-		        map.put("name", "张" + i);
-		        map.put("age", "1" + i);
-		        map.put("sex", "男");
-		        map.put("job", "职业"+i);
-		        map.put("hobby", "爱好"+i);
-		        map.put("phone", "1312365322"+i);
-		        tab1list.add(map);
-			}
-		    params.put("tab1", tab1list);
-		    //创建替代&生成模板里tab1标识的表格中的值结束
-		    
-     	    //创建替代&生成模板里tab2标识的表格中的值开始
-		    List<Map<String,String>> tab2list = new ArrayList<Map<String,String>>();			
-			for (int i = 1; i <= 3; i++) {
-		        Map<String, String> map = new HashMap<String, String>();
-		        map.put("name", "王" + i);
-		        map.put("age", "1" + i);
-		        map.put("sex", "女");
-		        map.put("job", "职业"+i);
-		        tab2list.add(map);    
-			}
-			params.put("tab2", tab2list);
-			//创建替代&生成模板里tab2标识的表格中的值结束
-			
-			//创建替代&生成模板里tab3标识的表格中的值开始
-			List<Map<String,String>> tab3list = new ArrayList<Map<String,String>>();			
-			for (int i = 1; i <= 4; i++) {
-		        Map<String, String> map = new HashMap<String, String>();
-		        map.put("a", "a列值" + i);
-		        map.put("b", "b列值" + i);
-		        map.put("c", "c列值" + i);
-		        tab3list.add(map);    
-			}
-			params.put("tab3", tab3list);
-			//创建替代&生成模板里tab3标识的表格中的值结束
-			//......对应模板扩展
-			
-			gtt.templateWrite(filePath, outFile, params);
-			System.out.println("生成模板成功");
-			System.out.println(outFile);
-		} catch (Exception e) {
-			System.out.println("生成模板失败");
-			e.printStackTrace();
-		}
-	}
+	
 			
 /**
  * 用一个docx文档作为模板，然后替换其中的内容，再写入目标文档中。
@@ -121,9 +60,9 @@ public void templateWrite(String filePath, String outFile,
     doc.write(os);
     this.close(os);
     this.close(is);
-    String imageFile ="D:/Work/javaweb/template/插入图.jpg";
-    // 文档中插入图片
-    this.insertimageToDoc(outFile,imageFile,350,50);
+//    String imageFile ="D:/Work/cmis-main-dev/template/word/插入图.jpg";
+//    // 文档中插入图片
+//    this.insertimageToDoc(outFile,imageFile,350,50);
 }
 
 /**
@@ -186,18 +125,83 @@ private boolean replaceInPara(XWPFParagraph para, Map<String, Object> params) {
         for (int i = 0; i < runs.size(); i++) {
             XWPFRun run = runs.get(i);
             String runText = run.toString();
-            System.out.println("----"+runText);
             matcher = this.matcher(runText);
             if (matcher.find()) {
                 while ((matcher = this.matcher(runText)).find()) {
                 	String str=String.valueOf(params.get(matcher.group(1)));
-                	System.out.println("----"+str);
+                	//System.out.println("----"+runText);
+                	//System.out.println("----"+str);
                     runText = matcher.replaceFirst(str);
                 }
                 // 直接调用XWPFRun的setText()方法设置文本时，在底层会重新创建一个XWPFRun，把文本附加在当前文本后面，
                 // 所以我们不能直接设值，需要先删除当前run,然后再自己手动插入一个新的run。
+                Boolean isBold = run.isBold();
+                Boolean isItalic = run.isItalic();
+                Boolean isStrike = run.isStrike();
+                UnderlinePatterns Underline = run.getUnderline();
+                String Color = run.getColor();
+                int TextPosition = run.getTextPosition();
+                int FontSize = run.getFontSize();
+                String FontFamily = run.getFontFamily();
+                CTR ctr =run.getCTR();
                 para.removeRun(i);
-                para.insertNewRun(i).setText(runText);
+                //para.insertNewRun(i).setText(runText);
+                XWPFRun newrun = para.insertNewRun(i);
+                newrun.setText(runText);
+				try {
+					// 复制格式
+					newrun.setBold(isBold);
+					newrun.setItalic(isItalic);
+					newrun.setStrike(isStrike);
+					newrun.setUnderline(Underline);
+					newrun.setColor(Color);
+					newrun.setTextPosition(TextPosition);
+					if (FontSize != -1) {
+						newrun.setFontSize(FontSize);
+						CTRPr rpr = newrun.getCTR().isSetRPr() ? newrun.getCTR().getRPr() : newrun.getCTR().addNewRPr();
+				        CTFonts fonts = rpr.isSetRFonts() ? rpr.getRFonts() : rpr.addNewRFonts();
+				        fonts.setAscii(FontFamily);
+				        fonts.setEastAsia(FontFamily);
+				        fonts.setHAnsi(FontFamily);
+					}
+					if (FontFamily != null) {
+						newrun.setFontFamily(FontFamily);
+					}
+					if (ctr != null) {
+						Boolean flat = false;
+						try {
+							flat = ctr.isSetRPr();
+						} catch (Exception e) {
+						}
+						if (flat) {
+							CTRPr tmpRPr = ctr.getRPr();
+							if (tmpRPr.isSetRFonts()) {
+								CTFonts tmpFonts = tmpRPr.getRFonts();
+								CTRPr cellRPr = newrun.getCTR().isSetRPr() ? newrun
+										.getCTR().getRPr() : newrun
+										.getCTR().addNewRPr();
+								CTFonts cellFonts = cellRPr.isSetRFonts() ? cellRPr
+										.getRFonts() : cellRPr
+										.addNewRFonts();
+								cellFonts.setAscii(tmpFonts.getAscii());
+								cellFonts.setAsciiTheme(tmpFonts
+										.getAsciiTheme());
+								cellFonts.setCs(tmpFonts.getCs());
+								cellFonts.setCstheme(tmpFonts.getCstheme());
+								cellFonts.setEastAsia(tmpFonts
+										.getEastAsia());
+								cellFonts.setEastAsiaTheme(tmpFonts
+										.getEastAsiaTheme());
+								cellFonts.setHAnsi(tmpFonts.getHAnsi());
+								cellFonts.setHAnsiTheme(tmpFonts
+										.getHAnsiTheme());
+							}
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+              
             }
         }
         data = true;
@@ -527,5 +531,68 @@ private void close(InputStream is) {
 	        }
 	    }
 	}
+	public static void main(String[] args) {
+		String filePath = "D:/Work/cmis-main-dev/template/word/template.docx";//模板路径
+		String res = String.valueOf(new Date().getTime());
+		String outFile = "D:/DOC/doc/插入值后文档" + res + ".docx";//生成文档路径
+		try {
+			GeneralTemplateTool gtt = new GeneralTemplateTool();
 
+			Map<String, Object> params = new HashMap<String, Object>();
+			//创建替代模板里段落中如${title}值开始
+			params.put("title","标题文字" );
+			params.put("Tab1Title","表一");
+			params.put("Tab2Title","表二");  
+			//......对应模板扩展
+			//创建替代模板里段落中如${title}值结束
+			
+			//创建替代&生成模板里tab1标识的表格中的值开始
+			List<Map<String,String>> tab1list = new ArrayList<Map<String,String>>();
+			for (int i = 1; i <= 3; i++) {
+		        Map<String, String> map = new HashMap<String, String>();
+		        map.put("name", "张" + i);
+		        map.put("age", "1" + i);
+		        map.put("sex", "男");
+		        map.put("job", "职业"+i);
+		        map.put("hobby", "爱好"+i);
+		        map.put("phone", "1312365322"+i);
+		        tab1list.add(map);
+			}
+		    params.put("tab1", tab1list);
+		    //创建替代&生成模板里tab1标识的表格中的值结束
+		    
+     	    //创建替代&生成模板里tab2标识的表格中的值开始
+		    List<Map<String,String>> tab2list = new ArrayList<Map<String,String>>();			
+			for (int i = 1; i <= 3; i++) {
+		        Map<String, String> map = new HashMap<String, String>();
+		        map.put("name", "王" + i);
+		        map.put("age", "1" + i);
+		        map.put("sex", "女");
+		        map.put("job", "职业"+i);
+		        tab2list.add(map);    
+			}
+			params.put("tab2", tab2list);
+			//创建替代&生成模板里tab2标识的表格中的值结束
+			
+			//创建替代&生成模板里tab3标识的表格中的值开始
+			List<Map<String,String>> tab3list = new ArrayList<Map<String,String>>();			
+			for (int i = 1; i <= 4; i++) {
+		        Map<String, String> map = new HashMap<String, String>();
+		        map.put("a", "a列值" + i);
+		        map.put("b", "b列值" + i);
+		        map.put("c", "c列值" + i);
+		        tab3list.add(map);    
+			}
+			params.put("tab3", tab3list);
+			//创建替代&生成模板里tab3标识的表格中的值结束
+			//......对应模板扩展
+			
+			gtt.templateWrite(filePath, outFile, params);
+			System.out.println("生成模板成功");
+			System.out.println(outFile);
+		} catch (Exception e) {
+			System.out.println("生成模板失败");
+			e.printStackTrace();
+		}
+	}
 }
