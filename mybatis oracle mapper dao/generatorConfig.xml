@@ -1,0 +1,39 @@
+<!DOCTYPE generatorConfiguration      
+      PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"      
+      "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd"> 
+<!-- oracle的jar包文件路径 -->  
+  <generatorConfiguration>
+    <classPathEntry  location="ojdbc-6.0.0.jar"/>    
+    <context id="DB2Tables"  targetRuntime="MyBatis3">    
+        <commentGenerator>  
+            <!-- 是否取消注释 -->  
+            <property name="suppressDate" value="true"/>    
+            <!-- 是否生成注释代时间戳-->  
+            <property name="suppressAllComments" value="true"/>    
+        </commentGenerator>    
+<!-- 链接配置 -->   
+        <jdbcConnection driverClass="oracle.jdbc.OracleDriver" connectionURL="jdbc:oracle:thin:@10.1.108.43:1521:coreuat" userId="cmis" password="credit2014">    
+        </jdbcConnection>  	  
+	
+		<javaTypeResolver>  
+        <!-- 是否使用bigDecimal， false可自动转化以下类型（Long, Integer, Short, etc.） -->  
+           <property name="forceBigDecimals" value="false"/>    
+       </javaTypeResolver>  
+
+	<javaModelGenerator targetPackage="com.sinosafe.quartz.mybatis" targetProject="src">  
+        <!-- 是否在当前路径下新加一层schema,eg：fase路径cn.bdqn.mybatis， true:cn.bdqn.mybatis.[schemaName] -->  
+           <property name="enableSubPackages" value="false"/>  
+        <!-- 设置是否在getter方法中，对String类型字段调用trim()方法 -->  
+           <property name="trimStrings" value="false"/>    
+       </javaModelGenerator>    
+	<sqlMapGenerator targetPackage="com.sinosafe.quartz.mybatis" targetProject="src">    
+          <property name="enableSubPackages" value="true"/>    
+      </sqlMapGenerator>  
+	  <javaClientGenerator type="XMLMAPPER" targetPackage="com.sinosafe.quartz.dao" targetProject="src">    
+            <property name="enableSubPackages" value="true"/>    
+        </javaClientGenerator> 
+		<table tableName="ACC_LOAN" domainObjectName="AccLoan" enableCountByExample="false" enableUpdateByExample="true" enableDeleteByExample="false" enableSelectByExample="true" selectByExampleQueryId="true"></table> 
+		<table tableName="acc_mtd_plan" domainObjectName="AccMtdPlan" enableCountByExample="false" enableUpdateByExample="true" enableDeleteByExample="false" enableSelectByExample="true" selectByExampleQueryId="true"></table> 
+		<table tableName="psp_press_loan" domainObjectName="PspPressLoan" enableCountByExample="false" enableUpdateByExample="true" enableDeleteByExample="false" enableSelectByExample="true" selectByExampleQueryId="true"></table> 
+	 </context> 
+</generatorConfiguration>
